@@ -77,31 +77,31 @@ const TrackComplaint = () => {
         <h1 className="font-bold text-3xl mb-7">Track Complaint</h1>
 
         {/* Form to enter complaint ID */}
-        <Form
-          className="flex flex-row justify-center items-center gap-4 w-full"
-          validationBehavior="native"
-          onSubmit={onSubmit}
-        >
-          <Input
-            className="max-w-xs"
-            label="Enter Complaint ID"
-            labelPlacement={"inside"}
-            name="data"
-            radius="sm"
-            required
-            onChange={handleOnChange}
-            type="text"
-          />
-
-          <Button
-            type="submit"
-            variant="ghost"
-            color="success"
-            className="max-w-sm text-success "
-          >
+         <Form className="flex flex-col md:flex-row justify-center items-center gap-4 w-full"
+              validationBehavior="native"
+              onSubmit={onSubmit}
+              >
+              <Input
+                className="w-full sm:max-w-xs"
+                label="Enter Complaint ID"
+                labelPlacement="inside"
+                name="data"
+                radius="sm"
+                required
+                onChange={handleOnChange}
+                type="text"
+              />
+  
+              <Button
+                type="submit"
+                variant="ghost"
+                color="success"
+                className="w-full sm:max-w-sm text-success mt-2 sm:mt-0"
+              >
             Submit
           </Button>
         </Form>
+
 
         {/* Modal to display complaint details if available */}
         {complaintDetails.complaintId ? (
