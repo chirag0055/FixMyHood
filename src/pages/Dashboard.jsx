@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import Complaint from "../components/complaint";
+import Complaint from "../components/Complaint";
 import Stats from "../components/Stats";
 import { onValue, ref } from "firebase/database";
 import { db } from "../../firebase";
