@@ -3,9 +3,6 @@ import {
   NavbarBrand,
   NavbarContent,
   NavbarItem,
-  NavbarMenuToggle,
-  NavbarMenu,
-  NavbarMenuItem,
   Button,
 } from "@heroui/react";
 import logo from "../assets/logo.png";
@@ -17,23 +14,21 @@ import {
   DropdownSection,
 } from "@heroui/react";
 import { Link } from "react-router-dom";
-import { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/authProvider";
-import toast from "react-hot-toast";
-import { div } from "framer-motion/client";
 
 const NavbarComponent = ({ scrollToAbout }) => {
-  const location = useLocation(); // Get current page
-  const navigate = useNavigate(); // For navigation
-  const { user, logout } = useAuth();
+  const location = useLocation(); // Get the current page location
+  const navigate = useNavigate(); // Hook for navigation
+  const { user, logout } = useAuth(); // Get user authentication state and logout function
 
+  // Handle "About" link click behavior
   const handleAboutClick = (e) => {
     if (e && e.preventDefault) {
-      e.preventDefault(); // Prevents default behavior if event exists
+      e.preventDefault(); // Prevent default anchor behavior
     }
     if (location.pathname === "/") {
-      // Already on Home page, just scroll
+      // If already on the homepage, simply scroll to the About section
       scrollToAbout();
     } else {
       // Navigate to Home and scroll after the page loads
@@ -46,6 +41,7 @@ const NavbarComponent = ({ scrollToAbout }) => {
 
   return (
     <>
+      {/* Main Navigation Bar */}
       <Navbar
         disableAnimation
         className="bg-[#e9ecef] fixed top-0 left-0 w-full h-[60px]"
@@ -69,6 +65,8 @@ const NavbarComponent = ({ scrollToAbout }) => {
               About
             </Link>
           </NavbarItem>
+
+          {/* Show "Track Complaint" only if user is not logged in */}
           {user ? (
             <div></div>
           ) : (
@@ -82,8 +80,7 @@ const NavbarComponent = ({ scrollToAbout }) => {
 
         {/* Right Section: Buttons & Menu Toggle */}
         <NavbarContent justify="end">
-          {/* Desktop Buttons (Visible on Large Screens) */}
-
+          {/* If user is logged in, show Dashboard & Logout buttons */}
           {user ? (
             <div className="hidden sm:flex gap-2">
               <Button
@@ -107,6 +104,7 @@ const NavbarComponent = ({ scrollToAbout }) => {
               </Button>
             </div>
           ) : (
+            // If user is not logged in, show "Raise Complaint" & "Admin Login" buttons
             <div className="hidden sm:flex gap-2">
               <Button
                 color="primary"
@@ -149,6 +147,8 @@ const NavbarComponent = ({ scrollToAbout }) => {
                 >
                   About
                 </DropdownItem>
+
+                {/* Show "Track Complaint" only for unauthenticated users */}
                 {user ? (
                   <></>
                 ) : (
@@ -157,6 +157,7 @@ const NavbarComponent = ({ scrollToAbout }) => {
                   </DropdownItem>
                 )}
 
+                {/* If user is logged in, show Dashboard & Logout options */}
                 {user ? (
                   <>
                     <DropdownItem
@@ -183,6 +184,7 @@ const NavbarComponent = ({ scrollToAbout }) => {
                     </DropdownItem>
                   </>
                 ) : (
+                  // If user is not logged in, show Raise Complaint & Admin Login options
                   <>
                     <DropdownItem
                       showDivider

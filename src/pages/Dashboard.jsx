@@ -1,17 +1,20 @@
 import React, { useEffect, useState } from "react";
-import Complaint from "../components/complaint";
+import Complaint from "../components/Complaint";
 import Stats from "../components/Stats";
 import { onValue, ref } from "firebase/database";
 import { db } from "../../firebase";
 import { Select, SelectItem } from "@heroui/react";
 
 const Dashboard = () => {
+  // State to store complaints data
   const [complaints, setComplaints] = useState([]);
+
+  // States to store selected filters
   const [selectedState, setSelectedState] = useState("All");
   const [selectedCity, setSelectedCity] = useState("All");
   const [selectedStatus, setSelectedStatus] = useState("All");
 
-  // To get complainsts from firebase database
+  // Fetch complaints data from Firebase Realtime Database on component mount
   useEffect(() => {
     const unsubscribe = onValue(ref(db, "complaints/"), (complaints) => {
       //Reading values from Database
@@ -22,17 +25,17 @@ const Dashboard = () => {
       } else setComplaints([]); // If no data, set empty array
     });
 
-    return () => unsubscribe(); // Clean up Firebase listener
+    return () => unsubscribe(); // Clean up Firebase listener on unmount
   }, []);
 
-  //Initial sorting based on status, Define priority of status
+  // Define priority order for sorting complaints by status
   const statusOrder = {
     "Complaint Raised": 1,
     "In Progress": 2,
     Resolved: 3,
   };
 
-  // Extract unique statuses
+  // Extract unique statuses from complaints data for filtering
   const uniqueStatuses = [
     ...new Set(complaints.map((data) => data.status)),
   ].sort();
@@ -54,29 +57,32 @@ const Dashboard = () => {
           ),
         ].sort();
 
-  //Apply Filter
+  // Apply filtering based on selected state, city, and status
   const filteredComplaints = complaints.filter(
     (data) =>
       (selectedState === "All" || data.state === selectedState) &&
       (selectedCity === "All" || data.city === selectedCity) &&
       (selectedStatus === "All" || data.status === selectedStatus)
   );
-  //Sort By Status
+
+  // Sort filtered complaints by status priority
   filteredComplaints.sort(
     (a, b) => statusOrder[a.status] - statusOrder[b.status]
   );
 
   return (
     <div>
-      {/* Stats Section */}
+      {/* Stats Section - Displays complaint statistics */}
       <Stats complaints={complaints} />
 
-      {/* Filter Section */}
+      {/* Filter Section - Allows filtering complaints by state, city, and status */}
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 px-10 py-4 bg-[#F8F9FA] items-center  m-10 gap-8 rounded-lg shadow-lg">
-        {/* State Filter */}
+        {/* Label for Filter Section */}
         <div className="flex bg-[#ffad42] rounded-lg justify-center items-center h-[56px] mx-3 ">
           <div className=" text-lg font-bold">Filter by</div>
         </div>
+
+        {/* State Filter Dropdown */}
         <Select
           className="text-black-500 p-2 rounded"
           color="warning"
@@ -116,7 +122,7 @@ const Dashboard = () => {
           ))}
         </Select>
 
-        {/* Status Filter */}
+        {/* Status Filter Dropdown */}
         <Select
           className="  p-2 rounded"
           color="warning"
@@ -135,7 +141,7 @@ const Dashboard = () => {
         </Select>
       </div>
 
-      {/* Complaints Section */}
+      {/* Complaints Section - Displays list of complaints after applying filters */}
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5  p-10 bg-[#F8F9FA]  m-10 gap-8 rounded-lg shadow-lg">
         {filteredComplaints.length === 0
           ? "No Complaints found"

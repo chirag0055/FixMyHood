@@ -14,23 +14,41 @@ import {
   DropdownMenu,
   DropdownItem,
 } from "@heroui/react";
-import { ref, set, update } from "firebase/database";
-
+import { ref, update } from "firebase/database";
 import React from "react";
 import { db } from "../../firebase";
 
+// Down Arrow Icon component used in the dropdown button
+export const DownArrowIcon = () => (
+  <svg
+    width="24"
+    height="24"
+    viewBox="0 0 24 24"
+    fill="black"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <path
+      d="M6 9l6 6 6-6"
+      stroke="white"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+  </svg>
+);
+
 export default function Complaint({ formData }) {
-  const { isOpen, onOpen, onOpenChange } = useDisclosure();
+  const { isOpen, onOpen, onOpenChange } = useDisclosure(); // Modal control state
   const [selectedKeys, setSelectedKeys] = React.useState(
     new Set([formData.status])
-  );
+  ); // Tracks complaint status selection
 
-  //To update setSelectedKeys and to update my database
+  // Handles status change in the dropdown and updates Firebase
   const handleStatusChange = (keys) => {
     const newStatus = Array.from(keys)[0]; // Convert Set to string
     setSelectedKeys(new Set([newStatus])); // Update UI state
 
-    // Update in Firebase
+    // Update status in Firebase
     update(ref(db, "complaints/" + formData.complaintId), { status: newStatus })
       .then(() => {
         console.log(`Status updated to ${newStatus}`);
@@ -43,7 +61,6 @@ export default function Complaint({ formData }) {
   return (
     <>
       {/* Wrapping the Card inside a div to make it fully clickable */}
-
       <div className="w-full cursor-pointer" onClick={onOpen}>
         <Card
           className={`h-[300px] flex flex-col justify-between ${
@@ -56,6 +73,7 @@ export default function Complaint({ formData }) {
               : "bg-gray-200 border-gray-500"
           }`}
         >
+          {/* Card Header: Displays complaint location and category */}
           <CardHeader className="pb-0 pt-2 px-4 flex-col items-start mt-2">
             <p className="text-tiny uppercase font-bold">
               {formData.city}, {formData.state}
@@ -64,6 +82,7 @@ export default function Complaint({ formData }) {
             <h4 className="font-bold text-large">{formData.category}</h4>
           </CardHeader>
 
+          {/* Card Body: Displays complaint image */}
           <CardBody className="py-2 flex-grow">
             <div className="h-[200px] w-full">
               <Image
@@ -78,6 +97,7 @@ export default function Complaint({ formData }) {
         </Card>
       </div>
 
+      {/* Complaint Details Modal */}
       <Modal
         backdrop="opaque"
         classNames={{
@@ -91,6 +111,7 @@ export default function Complaint({ formData }) {
         <ModalContent className=" overflow-y-auto p-4 max-w-3xl w-full">
           {(onClose) => (
             <>
+              {/* Modal Header: Displays the complaint category */}
               <ModalHeader className="flex items-center justify-between gap-4 text-3xl font-bold">
                 {formData.category}
               </ModalHeader>
@@ -111,6 +132,8 @@ export default function Complaint({ formData }) {
                   {/* Status & Description */}
                   <div className="flex items-center justify-between">
                     <span className="font-bold">Description</span>
+
+                    {/* Dropdown for selecting status */}
                     <Dropdown>
                       <DropdownTrigger>
                         <Button
@@ -124,10 +147,13 @@ export default function Complaint({ formData }) {
                               : "text-gray-500 border-gray-500"
                           }`}
                           variant="bordered"
+                          endContent={<DownArrowIcon />}
                         >
                           {Array.from(selectedKeys)[0] || "Select Status"}
                         </Button>
                       </DropdownTrigger>
+
+                      {/* Dropdown Menu with status options */}
                       <DropdownMenu
                         disallowEmptySelection
                         aria-label="Select Status"
@@ -169,7 +195,7 @@ export default function Complaint({ formData }) {
                     </p>
                   </div>
 
-                  {/* User & Date */}
+                  {/* User Details & Date */}
                   <p className="text-sm">
                     <b>By:</b> {formData.fullName} <br />
                     <b>Contact Number: </b> {formData.phone} <br />
@@ -178,6 +204,8 @@ export default function Complaint({ formData }) {
                   </p>
                 </div>
               </ModalBody>
+
+              {/* Modal Footer: Close Button */}
               <ModalFooter>
                 <Button color="danger" variant="ghost" onPress={onClose}>
                   Close

@@ -6,6 +6,8 @@ import toast from "react-hot-toast";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { auth, db } from "../../firebase";
 import { ref, set } from "firebase/database";
+
+// Icon component for eye with a slash (used for hiding password)
 export const EyeSlashFilledIcon = (props) => {
   return (
     <svg
@@ -18,6 +20,8 @@ export const EyeSlashFilledIcon = (props) => {
       width="1em"
       {...props}
     >
+      {/* Various paths defining the icon shape */}
+
       <path
         d="M21.2714 9.17834C20.9814 8.71834 20.6714 8.28834 20.3514 7.88834C19.9814 7.41834 19.2814 7.37834 18.8614 7.79834L15.8614 10.7983C16.0814 11.4583 16.1214 12.2183 15.9214 13.0083C15.5714 14.4183 14.4314 15.5583 13.0214 15.9083C12.2314 16.1083 11.4714 16.0683 10.8114 15.8483C10.8114 15.8483 9.38141 17.2783 8.35141 18.3083C7.85141 18.8083 8.01141 19.6883 8.68141 19.9483C9.75141 20.3583 10.8614 20.5683 12.0014 20.5683C13.7814 20.5683 15.5114 20.0483 17.0914 19.0783C18.7014 18.0783 20.1514 16.6083 21.3214 14.7383C22.2714 13.2283 22.2214 10.6883 21.2714 9.17834Z"
         fill="currentColor"
@@ -42,6 +46,7 @@ export const EyeSlashFilledIcon = (props) => {
   );
 };
 
+// Icon component for visible eye (used for showing password)
 export const EyeFilledIcon = (props) => {
   return (
     <svg
@@ -54,6 +59,8 @@ export const EyeFilledIcon = (props) => {
       width="1em"
       {...props}
     >
+      {/* Various paths defining the icon shape */}
+
       <path
         d="M21.25 9.14969C18.94 5.51969 15.56 3.42969 12 3.42969C10.22 3.42969 8.49 3.94969 6.91 4.91969C5.33 5.89969 3.91 7.32969 2.75 9.14969C1.75 10.7197 1.75 13.2697 2.75 14.8397C5.06 18.4797 8.44 20.5597 12 20.5597C13.78 20.5597 15.51 20.0397 17.09 19.0697C18.67 18.0897 20.09 16.6597 21.25 14.8397C22.25 13.2797 22.25 10.7197 21.25 9.14969ZM12 16.0397C9.76 16.0397 7.96 14.2297 7.96 11.9997C7.96 9.76969 9.76 7.95969 12 7.95969C14.24 7.95969 16.04 9.76969 16.04 11.9997C16.04 14.2297 14.24 16.0397 12 16.0397Z"
         fill="currentColor"
@@ -66,7 +73,9 @@ export const EyeFilledIcon = (props) => {
   );
 };
 
+// SignUp Component
 export default function SignUp() {
+  // State for storing form data
   const [data, setData] = useState({
     name: "",
     employeeId: "",
@@ -74,10 +83,14 @@ export default function SignUp() {
     password: "",
   });
 
+  // State for toggling password visibility
   const [isVisible, setIsVisible] = useState(false);
   const toggleVisibility = () => setIsVisible(!isVisible);
+
+  // React Router navigation hook
   const navigate = useNavigate();
 
+  // Handles input changes and updates state accordingly
   const handleChange = (e) => {
     const { name, value } = e.target;
     setData((prev) => ({
@@ -86,23 +99,26 @@ export default function SignUp() {
     }));
   };
 
+  // Handles form submission
   const onSubmit = async (e) => {
     e.preventDefault();
 
+    // Firebase authentication method for creating a user
     await createUserWithEmailAndPassword(auth, data.email, data.password)
       .then((userCredentials) => {
         const user = userCredentials.user;
 
         toast.success("Account Created");
 
-        //write other user details in database
+        // Store additional user details in Firebase database
         set(ref(db, "adminData/" + user.uid), {
           name: data.name,
           employeeId: data.employeeId,
           email: data.email,
-          isValid: true, //By default it would be false so no unauthorised user can access Admin Login
+          isValid: false, // New users start as invalid (for admin verification)
         });
 
+        // Redirect to login page after successful registration
         navigate("/Login");
       })
 
@@ -110,6 +126,7 @@ export default function SignUp() {
         console.error("Error Code:", error.code);
         console.error("Error Message:", error.message);
 
+        // Display appropriate error messages to the user
         if (error.code === "auth/email-already-in-use") {
           toast.error("Email is already registered. Please log in.");
         } else if (error.code === "auth/invalid-email") {
@@ -124,12 +141,14 @@ export default function SignUp() {
 
   return (
     <div className=" flex flex-col justify-center items-center h-dvh ">
+      {/* Sign-up Heading */}
       <h1 className="font-bold text-3xl mb-7">Sign Up</h1>
       <Form
         className="flex flex-col justify-center items-center gap-4 w-full"
         validationBehavior="native"
         onSubmit={onSubmit}
       >
+        {/* Name Input Field */}
         <Input
           className="max-w-xs"
           key="name"
@@ -142,6 +161,7 @@ export default function SignUp() {
           required
         />
 
+        {/* Employee ID Input Field */}
         <Input
           className="max-w-xs"
           key="employeeId"
@@ -154,6 +174,7 @@ export default function SignUp() {
           required
         />
 
+        {/* Email Input Field */}
         <Input
           className="max-w-xs"
           key="email"
@@ -165,6 +186,8 @@ export default function SignUp() {
           onChange={handleChange}
           required
         />
+
+        {/* Password Input Field with Visibility Toggle */}
         <Input
           className="max-w-xs"
           label="Password"
@@ -190,6 +213,7 @@ export default function SignUp() {
           }
         />
 
+        {/* Submit Button */}
         <Button type="submit" variant="bordered" className="max-w-xs w-full ">
           Submit
         </Button>

@@ -5,6 +5,8 @@ import { signInWithEmailAndPassword } from "firebase/auth";
 import { auth, db } from "../../firebase";
 import { get, ref } from "firebase/database";
 import toast from "react-hot-toast";
+
+// Eye icon component for hiding password
 export const EyeSlashFilledIcon = (props) => {
   return (
     <svg
@@ -41,6 +43,7 @@ export const EyeSlashFilledIcon = (props) => {
   );
 };
 
+// Eye icon component for showing password
 export const EyeFilledIcon = (props) => {
   return (
     <svg
@@ -64,31 +67,46 @@ export const EyeFilledIcon = (props) => {
     </svg>
   );
 };
+
 export default function Login() {
+  // State for storing email and password
   const [data, setData] = React.useState({ email: "", password: "" });
+
+  // State to track password visibility
   const [isVisible, setIsVisible] = React.useState(false);
+
+  // React Router hook for navigation
   const navigate = useNavigate();
+
+  // Toggle function to switch password visibility
   const toggleVisibility = () => setIsVisible(!isVisible);
 
+  // Function to handle input changes
   const handleOnChange = (e) => {
     setData({ ...data, [e.target.name]: e.target.value });
   };
   const onSubmit = async (e) => {
-    e.preventDefault();
+    e.preventDefault(); // Prevent default form submission behavior
+
     try {
+      // Sign in user with email and password
       const userCredentials = signInWithEmailAndPassword(
         auth,
         data.email,
         data.password
       );
-      const user = (await userCredentials).user;
+      const user = (await userCredentials).user; // Get authenticated user
+
+      // Fetch user data from Firebase Realtime Database
       const userSnap = await get(ref(db, `adminData/${user.uid}`));
 
       if (userSnap.exists()) {
         const userData = userSnap.val();
+
+        // Check if the user's account is validated
         if (userData.isValid) {
-          toast.success("Successfully Logged In");
-          navigate("/dashboard");
+          toast.success("Successfully Logged In"); // Show success message
+          navigate("/dashboard"); // Redirect to dashboard
         } else {
           toast.error("Your account is not validated yet. Contact admin.");
           await signOut(auth); // Log out invalid users
@@ -100,6 +118,11 @@ export default function Login() {
     } catch (error) {
       console.error(error.code);
       console.error(error.message);
+
+      // Handle invalid credentials error
+      if (error.code === "auth/invalid-credential") {
+        toast.error("Invalid Credentials");
+      }
     }
   };
   return (
@@ -110,6 +133,7 @@ export default function Login() {
         validationBehavior="native"
         onSubmit={onSubmit}
       >
+        {/* Email Input */}
         <Input
           className="max-w-xs"
           label="Email"
@@ -118,9 +142,10 @@ export default function Login() {
           radius="sm"
           required
           onChange={handleOnChange}
-          type="text"
+          type="email"
         />
 
+        {/* Password Input with Visibility Toggle */}
         <Input
           className="max-w-xs"
           label="Password"
@@ -144,6 +169,8 @@ export default function Login() {
             </button>
           }
         />
+
+        {/* Submit Button */}
         <Button
           type="submit"
           variant="ghost"
@@ -152,6 +179,8 @@ export default function Login() {
         >
           Submit
         </Button>
+
+        {/* Signup Link */}
         <div>
           Create a new Account{" "}
           <Link to="/SignUp" className="text-blue-500">

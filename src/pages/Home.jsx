@@ -8,9 +8,9 @@ const Home = ({ aboutRef }) => {
   const navigate = useNavigate();
   return (
     <>
-      {/* Banner Section */}
+      {/* Banner Section - Hero section introducing the platform */}
       <div className="grid grid-cols-1 md:grid-cols-2 h-auto md:h-[70vh] items-center px-4 md:px-16 lg:px-32">
-        {/* Left Content */}
+        {/* Left Content - Heading and Description */}
         <div className="text-center md:text-left">
           <div className="text-3xl md:text-5xl lg:text-7xl font-bold">
             Fix My Hood
@@ -20,6 +20,8 @@ const Home = ({ aboutRef }) => {
             potholes, garbage, and streetlights for a cleaner, safer
             neighborhood.
           </div>
+
+          {/* Button to navigate to the complaint page */}
           <Button
             color="primary"
             variant="ghost"
@@ -30,7 +32,7 @@ const Home = ({ aboutRef }) => {
           </Button>
         </div>
 
-        {/* Right Content */}
+        {/* Right Content - Banner Image */}
         <div className="flex justify-center">
           <img
             src={banner}
@@ -39,7 +41,7 @@ const Home = ({ aboutRef }) => {
         </div>
       </div>
 
-      {/* Features Section */}
+      {/* Features Section - Highlights key functionalities */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 px-4 md:px-16 lg:px-32 py-10 bg-[#e9ecef]">
         <FeatureCard
           title="Easy Issue Reporting"
@@ -63,12 +65,12 @@ const Home = ({ aboutRef }) => {
         />
       </div>
 
-      {/* About Section */}
+      {/* About Section - Information about the platform */}
       <div
         ref={aboutRef}
         className="flex flex-col md:flex-row items-center h-auto md:h-[70vh] px-4 md:px-16 lg:px-32 py-10"
       >
-        {/* Left Content */}
+        {/* Left Content - About Image */}
         <div className="flex justify-center w-full md:w-1/2">
           <img
             src={aboutUs}
@@ -76,7 +78,7 @@ const Home = ({ aboutRef }) => {
           />
         </div>
 
-        {/* Right Content */}
+        {/* Right Content - Description about Fix My Hood */}
         <div className="w-full md:w-3/4 lg:w-1/2 mt-6 md:mt-0">
           <h2 className="text-2xl md:text-3xl font-bold">About FixMyHood</h2>
           <div className="text-base md:text-base lg:text-lg mt-4 leading-relaxed text-justify space-y-4">
@@ -99,13 +101,11 @@ const Home = ({ aboutRef }) => {
           </div>
         </div>
       </div>
-
-      {/* Footer */}
     </>
   );
 };
 
-// Feature Card Component
+// Feature Card Component - Displays feature details in a card layout
 function FeatureCard({ title, description, icon }) {
   return (
     <div className="flex flex-col items-center p-6 shadow-lg rounded-xl bg-white ">

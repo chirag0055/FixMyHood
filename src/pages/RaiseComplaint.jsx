@@ -1,7 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { Select, SelectItem, Input } from "@heroui/react";
 import imageCompression from "browser-image-compression";
-
 import { Textarea } from "@heroui/input";
 import { db } from "../../firebase";
 import { set, ref } from "firebase/database";
@@ -10,7 +9,11 @@ import toast from "react-hot-toast";
 
 export default function RaiseComplaint() {
   const [complaintId, setComplaintId] = useState(null);
+
+  //Reference of Image Upload
   const fileInputRef = useRef(null);
+
+  // Initial state for the form
   const initialFormState = {
     fullName: "",
     email: "",
@@ -21,10 +24,11 @@ export default function RaiseComplaint() {
     city: "",
     state: "",
     pincode: "",
-    date: new Date().toLocaleDateString("en-GB"),
+    date: new Date().toLocaleDateString("en-GB"), // Set current date in dd/mm/yyyy format
     image: null,
   };
 
+  // State to store form data
   const [formData, setFormData] = useState({
     fullName: "",
     email: "",
@@ -35,9 +39,11 @@ export default function RaiseComplaint() {
     city: "",
     state: "",
     pincode: "",
-    date: new Date().toLocaleDateString("en-GB"),
+    date: new Date().toLocaleDateString("en-GB"), // Set current date in dd/mm/yyyy format
     image: null,
   });
+
+  // Function to convert file to Base64 format
   const convertToBase64 = (file) => {
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
@@ -47,11 +53,12 @@ export default function RaiseComplaint() {
     });
   };
 
+  // Function to handle image upload and compression
   const handleImageUpload = async (file) => {
     const options = {
-      maxSizeMB: 0.2, // Reduce size to around 200KB
-      maxWidthOrHeight: 800, // Resize image dimensions
-      useWebWorker: true,
+      maxSizeMB: 0.2, // Compress image to a maximum size of 200KB
+      maxWidthOrHeight: 800, // Resize the image to a max width or height of 800px
+      useWebWorker: true, // Optimize performance
     };
 
     try {
@@ -65,8 +72,9 @@ export default function RaiseComplaint() {
     }
   };
 
+  // Function to handle input changes
   const handleChange = async (e) => {
-    const { name, type, value, files } = e.target; // Extract necessary properties from event
+    const { name, type, value, files } = e.target;
 
     // Handle file input separately
     if (type === "file" && files.length > 0) {
@@ -91,12 +99,13 @@ export default function RaiseComplaint() {
     }
   };
 
+  // Function to handle form submission
   const handleSubmit = (e) => {
     e.preventDefault();
 
     const newcomplaintId = nanoid();
-    console.log(formData);
 
+    // Save complaint data to Firebase
     set(ref(db, "complaints/" + newcomplaintId), {
       complaintId: newcomplaintId,
       fullName: formData.fullName,
@@ -117,11 +126,12 @@ export default function RaiseComplaint() {
         toast.success("Complaint raised successfully");
         setComplaintId(newcomplaintId);
 
+        // Reset file input field
         if (fileInputRef.current) {
           fileInputRef.current.value = "";
         }
 
-        setFormData(initialFormState); //Reset Form
+        setFormData(initialFormState); //Reset Form fields
       })
       .catch((error) => {
         console.error(error.code);
