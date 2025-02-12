@@ -96,7 +96,7 @@ const TrackComplaint = () => {
                 type="submit"
                 variant="ghost"
                 color="success"
-                className="w-full sm:max-w-sm text-success mt-2 sm:mt-0"
+                className="max-w-sm text-success mt-2 sm:mt-0"
               >
             Submit
           </Button>
